@@ -1,5 +1,4 @@
 import './shim.js'
-// import translate from 'google-translate-api-x';
 import translate from 'translate-google-api';
 
 const API_KEY = "AIzaSyBlHtzf_r4LcsMiO9LGM9-L1dLeWPolDZs";
@@ -406,10 +405,6 @@ const allMaybeADI = [
   'vitamin h',
 ];
 
-// const projectId = 'vegan-app-373516';
-// const {Translate} = require('@google-cloud/translate').v2;
-// const translate = new Translate(projectId);
-
 function generateBody(image) {
   const body = {
     requests: [
@@ -596,12 +591,5 @@ async function parseTextAPI(text, showMaybeNonVegan){
   }
   return output;
 }
-// async function translateText(toTranslate) {
-//   //text can be a string for translating or an array of strings for translating multiple texts.
-//   // let [translations] = await translate.translate(text, 'en');
-//   // translations = Array.isArray(translations) ? translations : [translations];
-//   const { text } = await translate(toTranslate, { to: 'en' });
-//   return text;
-// }
 export const OCR = callGoogleVisionAsync;
 export const parse = parseTextAPI;
