@@ -1,5 +1,5 @@
 import './shim.js'
-import 'config.js'
+import './config.js'
 import translate from 'translate-google-api';
 
 const softcoreADI = ['animal fat',
