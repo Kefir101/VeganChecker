@@ -1,8 +1,6 @@
 import './shim.js'
+import 'config.js'
 import translate from 'translate-google-api';
-
-const API_KEY = "AIzaSyBlHtzf_r4LcsMiO9LGM9-L1dLeWPolDZs";
-const API_URL = `https://vision.googleapis.com/v1/images:annotate?key=${API_KEY}`;
 
 const softcoreADI = ['animal fat',
   'animal fats and oils',
