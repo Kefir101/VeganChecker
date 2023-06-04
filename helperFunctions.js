@@ -1,7 +1,7 @@
 import './shim.js'
-import './config.js'
 import translate from 'translate-google-api';
-
+import {config} from './config.js'
+const API_URL = config.API_URL;
 const softcoreADI = ['animal fat',
   'animal fats and oils',
   'animal fiber',
