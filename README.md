@@ -1,6 +1,6 @@
 # VeganChecker App
 
-Quickly check if any list of ingredients (food, cosmetic, etc.) in over 100 languages has any animal derived ingredients! Nearly a thousand animal derived ingredients checked for! Nearly a thousand animal derived ingredients checked for!Includes ingredients that may not be vegan depending on the source, but these ingredients can be hidden. Just take a photo and see for yourself.
+Quickly check if any list of ingredients (food, cosmetic, etc.) in over 100 languages has any animal derived ingredients! Nearly a thousand animal derived ingredients checked for! Nearly a thousand animal derived ingredients checked for! Includes ingredients that may not be vegan depending on the source, but these ingredients can be hidden. Just take a photo and see for yourself.
 
 ## Download app
 https://apps.apple.com/us/app/veganchecker/id1672693217 or just look up VeganChecker on the App store! Android version coming soon.

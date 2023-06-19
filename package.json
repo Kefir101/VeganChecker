@@ -36,6 +36,7 @@
     "react-native-level-fs": "^3.0.0",
     "react-native-os": "^1.0.1",
     "react-native-randombytes": "^3.0.0",
+    "react-native-svg": "^12.3.0",
     "react-native-switch": "^1.5.1",
     "react-native-tcp": "^3.2.1",
     "react-native-text-recognition": "^1.0.0",
