@@ -1,407 +1,11 @@
 import './shim.js'
-import translate from 'translate-google-api';
+// import translate from 'translate-google-api';
 import { config } from './config.js'
+import { softcoreADI, allDefADI, allProbADI, allMaybeADI} from './ADIs.js'
+// import { translate } from '@vitalets/google-translate-api';
+import translate from 'google-translate-api-x';
+var screenHeight, screenWidth;
 const API_URL = config.API_URL;
-const softcoreADI = ['animal fat',
-  'animal fats and oils',
-  'animal fiber',
-  'animal hair',
-  'antlers',
-  'bear bile',
-  'bee pollen',
-  'beeswax',
-  'blood',
-  'bone ash',
-  'bone char',
-  'bone meal',
-  'broth',
-  'carmine',
-  'carotene',
-  'casein',
-  'caseinate',
-  'cashmere',
-  'castor',
-  'castoreum',
-  'caviar',
-  'cheese',
-  'cochineal',
-  'confectioner\'s glaze',
-  'cricket flour',
-  'custard',
-  'down',
-  'egg',
-  'eggnog',
-  'eggs',
-  'escargot',
-  'feathers',
-  'fish',
-  'fishmeal',
-  'fur',
-  'gallstones',
-  'game',
-  'gelatin',
-  'ghee',
-  'honey',
-  'honeycomb',
-  'horns',
-  'horse oil',
-  'horsehair',
-  'insects',
-  'ivory',
-  'lactose',
-  'lard',
-  'lardon',
-  'leather',
-  'livestock',
-  'manure',
-  'mayonnaise',
-  'meat',
-  'milk',
-  'mink',
-  'mink lashes',
-  'mink oil',
-  'musk',
-  'nautilus',
-  'offal',
-  'organ',
-  'organs',
-  'pearl',
-  'quarry',
-  'rennet',
-  'royal jelly',
-  'scales',
-  'shark',
-  'shellac',
-  'shellfish',
-  'silk',
-  'skin',
-  'skins',
-  'skunk oil',
-  'snail',
-  'snails',
-  'snake wine',
-  'sponge',
-  'stock',
-  'suede',
-  'tallow',
-  'tortoise shell',
-  'tortoiseshell',
-  'venom',
-  'whale oil',
-  'whey',
-  'wool'
-];
-const allDefADI = [
-  'afterbirth',
-  'albumen',
-  'albumin',
-  'alligator skin',
-  'ambergris',
-  'amerchol l101',
-  'angora',
-  'animal bone ash',
-  'animal fat',
-  'animal fats and oils',
-  'animal fiber',
-  'animal hair',
-  'antlers',
-  'arachnids',
-  'bear bile',
-  'bee pollen',
-  'bee products',
-  'beeswax',
-  'blood',
-  'boar bristles',
-  'bone',
-  'bone ash',
-  'bone char',
-  'bone meal',
-  'calcium caseinate',
-  'calfskin',
-  'carmine',
-  'carminic acid',
-  'casein',
-  'caseinate',
-  'cashmere',
-  'castor',
-  'castoreum',
-  'catgut',
-  'caviar',
-  'cera flava',
-  'cheese',
-  'cochineal',
-  'cod liver oil',
-  'collagen',
-  "confectioner's glaze",
-  'cricket flour',
-  'donkey milk',
-  'down',
-  'egg',
-  'egg protein',
-  'eggnog',
-  'eggs',
-  'ejaculate',
-  'elastin',
-  'emu oil',
-  'escargot',
-  'feathers',
-  'fish',
-  'fish liver oil',
-  'fish oil',
-  'fish scales',
-  'fishmeal',
-  'fur',
-  'game',
-  'gelatin',
-  'ghee',
-  'hard roe',
-  'hide glue',
-  'honey',
-  'honeycomb',
-  'horns',
-  'horse oil',
-  'horsehair',
-  'hydrolyzed animal protein',
-  'hydrolyzed milk protein',
-  'insects',
-  'isinglass',
-  'isopropyl lanolate',
-  'lactose',
-  'laneth',
-  'lanogene',
-  'lanolin',
-  'lanolin acids',
-  'lanolin alcohol',
-  'lard',
-  'leather',
-  'manure',
-  'marine oil',
-  'meat',
-  'milk',
-  'milk protein',
-  'mink',
-  'mink lashes',
-  'mink oil',
-  'offal',
-  'organ',
-  'organs',
-  'pearl',
-  'pearl essence',
-  'pepsin',
-  'placenta',
-  'propolis',
-  'quarry',
-  'rennet',
-  'rennin',
-  'resinous glaze',
-  'royal jelly',
-  'scales',
-  'schmaltz',
-  'sea turtle oil',
-  'shark',
-  'shark liver oil',
-  'shellac',
-  'shellfish',
-  'silk',
-  'silk powder',
-  'skin',
-  'skins',
-  'skunk oil',
-  'snail',
-  'snails',
-  'snake wine',
-  'sodium caseinate',
-  'sodium tallowate',
-  'soft roe',
-  'sperm oil',
-  'sponge',
-  'suet',
-  'tallow',
-  'tallow acid',
-  'tallow amide',
-  'tallow amine',
-  'tallow fatty alcohol',
-  'tallow glycerides',
-  'tallow imidazoline',
-  'talloweth-6',
-  'urea',
-  'uric acid',
-  'urine',
-  'venom',
-  'whale oil',
-  'whey',
-  'wool',
-  'wool fat',
-  'wool wax'
-];
-const allProbADI = [
-  'chitosan',
-  'cholesterol',
-  'cholesterin',
-  'duodenum substance',
-  'duodenum substances',
-  'estradiol',
-  'guanine',
-  'polypeptides',
-  'pristane',
-  'lanosterols',
-  'keratin',
-  'methionine',
-  'vitamin d3',
-];
-const allMaybeADI = [
-  'adrenaline',
-  'alanine',
-  'alcloxa',
-  'aldioxa',
-  'aliphatic alcohol',
-  'allantoin',
-  'alpha-hydroxy acids',
-  'ambrosia',
-  'amino acids',
-  'aminosuccinate acid',
-  'arachidonic acid',
-  'arachidyl proprionate',
-  'beta carotene',
-  'biotin',
-  'broth',
-  'calciferol',
-  'capryl betaine',
-  'caprylamine oxide',
-  'caprylic acid',
-  'caprylic triglyceride',
-  'carbamide',
-  'carotene',
-  'cerebrosides',
-  'cetyl alcohol',
-  'cetyl palmitate',
-  'choline bitartrate',
-  'civet',
-  'civet oil',
-  'coral rock',
-  'corticosteroid',
-  'cortisone',
-  'custard',
-  'cysteine',
-  'l-form',
-  'cystine',
-  'dexpanthenol',
-  'diglycerides',
-  'dimethyl stearamine',
-  'dyes',
-  'ergocalciferol',
-  'ergosterol',
-  'estrogen',
-  'gallstones',
-  'glucose tyrosinase',
-  'glycerides',
-  'glycerin',
-  'glycerol',
-  'glyceryls',
-  'glycreth-26',
-  'gribenes',
-  'guano',
-  'hyaluronic acid',
-  'hydrocortisone',
-  'imidazolidinyl urea',
-  'insulin',
-  'isopropyl myristate',
-  'isopropyl palmitate',
-  'ivory',
-  'l. cysteine',
-  'lactic acid',
-  'lardon',
-  'lecithin',
-  'linoleic acid',
-  'linoleic acids',
-  'lipase',
-  'lipids',
-  'lipoids',
-  'livestock',
-  'mayonnaise',
-  'monoglycerides',
-  'musk',
-  'myristal ether sulfate',
-  'myristic acid',
-  'myristyls',
-  'natural glaze',
-  'nautilus',
-  'nucleic acids',
-  'ocenol',
-  'octyl dodecanol',
-  'oleic acid',
-  'oleths',
-  'oleyl alcohol',
-  'oleyl arachidate',
-  'oleyl imidazoline',
-  'oleyl myristate',
-  'oleyl oleate',
-  'oleyl stearate',
-  'palmitamide',
-  'palmitamine',
-  'palmitate',
-  'palmitic acid',
-  'panthenol',
-  'panthenyl',
-  'polyglycerol',
-  'polysorbates',
-  'progesterone',
-  'provitamin a',
-  'provitamin b-5',
-  'provitamin d-2',
-  'provitamin d2',
-  'pure food glaze',
-  'rambak',
-  'retinol',
-  'ribonucleic acid',
-  'rinds',
-  'rna',
-  'sable brushes',
-  'scratchings',
-  'sea shells',
-  'sheepskin',
-  'sodium steroyl lactylate',
-  'spermaceti',
-  'squalane',
-  'squalene',
-  'stearamide',
-  'stearamine',
-  'stearamine oxide',
-  'stearates',
-  'stearic acid',
-  'stearic hydrazide',
-  'stearin',
-  'stearone',
-  'stearoxytrimethylsilane',
-  'stearoyl lactylic acid',
-  'stearyl acetate',
-  'stearyl alcohol',
-  'stearyl betaine',
-  'stearyl caprylate',
-  'stearyl citrate',
-  'stearyl glycyrrhetinate',
-  'stearyl heptanoate',
-  'stearyl imidazoline',
-  'stearyl octanoate',
-  'stearyl stearate',
-  'stearyldimethyl amine',
-  'steroids',
-  'sterols',
-  'stock',
-  'suede',
-  'tortoise shell',
-  'tortoiseshell',
-  'triterpene alcohols',
-  'turtle oil',
-  'tyrosine',
-  'vitamin a',
-  'vitamin b factor',
-  'vitamin b-complex factor',
-  'vitamin b12',
-  'vitamin d',
-  'vitamin d2',
-  'vitamin h',
-];
 
 function generateBody(image) {
   const body = {
@@ -447,7 +51,7 @@ async function callGoogleVisionAsync(image) {
   });
   return detectedText ? [detectedText, wordAndBox] : [{ text: "No text found." }, wordAndBox];
 }
-function parseTextManual(text, showMaybeNonVegan, wordAndBox, boxVertices, screenHeight, screenWidth) {
+function parseTextManual(text, showMaybeNonVegan, wordAndBox, boxVertices) {
   // let ADI = (isStrict ? allDefADI : softcoreADI);
   let ADI = allDefADI.concat(allProbADI);
   let isVegan = true;
@@ -495,7 +99,7 @@ function parseTextManual(text, showMaybeNonVegan, wordAndBox, boxVertices, scree
       let wordInWord = wordsInWord[j];
       if (ADI.includes(wordInWord)) {
         nonVeganFound.push(wordInWord);
-        addToBoxVertices(wordInWord, boxVertices, wordAndBox, "red", screenHeight, screenWidth);
+        addToBoxVertices(wordInWord, boxVertices, wordAndBox, "red");
         isVegan = false;
       }
     }
@@ -506,7 +110,7 @@ function parseTextManual(text, showMaybeNonVegan, wordAndBox, boxVertices, scree
       let word = wordList[i];
       if (allMaybeADI.includes(word)) {
         maybeVeganFound.push(word);
-        addToBoxVertices(word, boxVertices, wordAndBox, "yellow", screenHeight, screenWidth)
+        addToBoxVertices(word, boxVertices, wordAndBox, "yellow")
         maybeVegan = true;
       }
       if (/\s/.test(word)) {
@@ -515,7 +119,7 @@ function parseTextManual(text, showMaybeNonVegan, wordAndBox, boxVertices, scree
           let wordInWord = wordsInWord[j];
           if (allMaybeADI.includes(wordInWord)) {
             maybeVeganFound.push(word);
-            addToBoxVertices(word, boxVertices, wordAndBox, "yellow", screenHeight, screenWidth);
+            addToBoxVertices(word, boxVertices, wordAndBox, "yellow");
             maybeVegan = true;
           }
         }
@@ -532,10 +136,9 @@ function parseTextManual(text, showMaybeNonVegan, wordAndBox, boxVertices, scree
   }
   return output;
 }
-async function parseTextAPI(text, showMaybeNonVegan, wordAndBox, boxVertices, screenHeight, screenWidth) {
+async function parseTextAPI(text, showMaybeNonVegan, wordAndBox, boxVertices) {
   //[vegan value from 0 to 2, foundADI]
   let output = [];
-  // console.log(text + "\n__________________________________________________________________________")
   if (text == "No text found.") {
     output[0] = -1;
     return output;
@@ -567,7 +170,6 @@ async function parseTextAPI(text, showMaybeNonVegan, wordAndBox, boxVertices, sc
   });
   let htmlstring = await response.text();
   let elementList = htmlstring.split("<");
-  console.log(isVegan + ", " + showMaybeNonVegan);
   for (let i = 0; i < elementList.length; i++) {
     let element = elementList[i];
     if (element.startsWith("label class=\"vegan-status")) {
@@ -576,10 +178,10 @@ async function parseTextAPI(text, showMaybeNonVegan, wordAndBox, boxVertices, sc
       if (status == "not-vegan" || status == "probably-not-vegan") {
         isVegan = false;
         nonVeganFound += ingredient + ", ";
-        addToBoxVertices(ingredient, boxVertices, wordAndBox, "red", screenHeight, screenWidth);
+        addToBoxVertices(ingredient, boxVertices, wordAndBox, "red");
       } else if (status == "maybe-vegan") {
         maybeVegan = true;
-        if (showMaybeNonVegan) addToBoxVertices(ingredient, boxVertices, wordAndBox, "yellow", screenHeight, screenWidth);
+        if (showMaybeNonVegan) addToBoxVertices(ingredient, boxVertices, wordAndBox, "yellow");
         maybeVeganFound += ingredient + ", ";
       }
     }
@@ -594,14 +196,14 @@ async function parseTextAPI(text, showMaybeNonVegan, wordAndBox, boxVertices, sc
   }
   return output;
 }
-function addToBoxVertices(ingredient, boxVertices, wordAndBox, boxColor, screenHeight, screenWidth) {
+function addToBoxVertices(ingredient, boxVertices, wordAndBox, boxColor) {
   let vertices = wordAndBox[ingredient.toLowerCase()];
   if (vertices != undefined) {
     let xyPairs = [];
     //4096 by 2304, scale by height/4096, width/2304
     vertices.forEach(vertex => xyPairs.push(
-      [Math.round(vertex.y * screenHeight / 4096), 
-    Math.round(vertex.x * screenWidth / 2304)]));
+      [Math.round(vertex.y * screenHeight / 4096),
+      Math.round(vertex.x * screenWidth / 2304)]));
     for (let other = 0; other < boxVertices.length; other++) {
       const otherBox = boxVertices[other];
       if (otherBox[0][0][0] == xyPairs[0][0] && otherBox[0][0][1] == xyPairs[0][1]) return;
@@ -609,17 +211,19 @@ function addToBoxVertices(ingredient, boxVertices, wordAndBox, boxColor, screenH
     boxVertices.push([xyPairs, boxColor]);
   }
 }
-async function parseTextBothWays(text, showMaybeNonVegan, wordAndBox, screenHeight, screenWidth) {
-  let translated = await translate(text, { to: "en" });
-  text = translated[0];
+async function parseTextBothWays(text, showMaybeNonVegan, wordAndBox, screenH, sWidth) {
+  screenHeight = screenH;
+  screenWidth = sWidth;
+  // let translated = await translate(text, { to: "en" });
+  // let translated = await translate(text, { to: 'en' });
+  const res = await translate(text, {to: 'en'});
+  const languageFound = res.from.language.iso; 
+  if(languageFound != 'en') text = res.text; 
+  
   let boxVertices = [];
-
-  const apiWay = await parseTextAPI(text, showMaybeNonVegan, wordAndBox, boxVertices, screenHeight, screenWidth);
-  const manualWay = parseTextManual(text, showMaybeNonVegan, wordAndBox, boxVertices, screenHeight, screenWidth);
+  const apiWay = await parseTextAPI(text, showMaybeNonVegan, wordAndBox, boxVertices);
+  const manualWay = parseTextManual(text, showMaybeNonVegan, wordAndBox, boxVertices);
   let apiScore = apiWay[0], manualScore = manualWay[0];
-  console.log(apiScore + ", " + manualScore);
-  console.log("A:" + apiWay[1]);
-  console.log("M: " + manualWay[1]);
   let veganScore = Math.min(apiScore, manualScore);
   let contains = "";
   if (apiScore == 2 && manualScore == 2) {
@@ -646,11 +250,11 @@ async function parseTextBothWays(text, showMaybeNonVegan, wordAndBox, screenHeig
     let apiFoundArr = apiWay[1].split(",");
     let manualFoundArr = manualWay[1];
     for (let api = 0; api < apiFoundArr.length; api++) {
-      let f1 = apiFoundArr[api];
+      let f1 = apiFoundArr[api].trim().toLowerCase();
       for (let manual = 0; manual < manualFoundArr.length; manual++) {
-        let f2 = manualFoundArr[manual];
+        let f2 = manualFoundArr[manual].trim().toLowerCase();
         //apiFound overrides manualFound if they both have the same ingredient
-        if (f2.trim().toLowerCase() == f1.trim().toLowerCase()) {
+        if (f2 == f1) {
           manualFoundArr[manual] = "";
         }
       }
@@ -658,7 +262,6 @@ async function parseTextBothWays(text, showMaybeNonVegan, wordAndBox, screenHeig
     for (let api = 0; api < apiFoundArr.length; api++) {
       contains += apiFoundArr[api].trim() + ", ";
     }
-    console.log(manualFoundArr)
     for (let manual = 0; manual < manualFoundArr.length; manual++) {
       if (manualFoundArr[manual] == "") continue;
       let ingredient = manualFoundArr[manual].trim();
@@ -675,9 +278,37 @@ async function parseTextBothWays(text, showMaybeNonVegan, wordAndBox, screenHeig
       contains += ingredient.trim() + ", ";
     }
   }
-  if (contains.endsWith(", ")) {
-    contains = contains.slice(0, contains.length - 2);
+  if (contains.endsWith(", ")) contains = contains.slice(0, contains.length - 2);
+
+  //remove duplicates
+  let containsArr = contains.split(", ");
+  for (let i1 = 0; i1 < containsArr.length; i1++) {
+    const ing1 = containsArr[i1].toLowerCase();
+    for (let i2 = i1+1; i2 < containsArr.length; i2++) {
+      const ing2 = containsArr[i2].toLowerCase();
+      if(ing1 == ing2) containsArr.splice(i2, 1);
+      i2--;
+    }
   }
+  contains = containsArr.join(", ");
+
+  //adds boxes around ingredients in their original language based on OCR-found coordinates
+  if(languageFound != 'en' && contains.length > 0){
+    let translatedADIArr = contains.split(", ");
+    let untranslatedADI = await translate(contains, {to: languageFound});
+    let untranslatedADIArr = untranslatedADI.text.replaceAll('，',', ').split(", ");
+    untranslatedADIArr.forEach(ingredient => {
+      //NOT supposed to be RED because it depends on whether the ingredient is maybe or def non-vegan
+      //FIX later
+      addToBoxVertices(ingredient, boxVertices, wordAndBox, "red"); 
+    });
+    for (let ADI = 0; ADI < translatedADIArr.length; ADI++) {
+      translatedADIArr[ADI] += " (" + untranslatedADIArr[ADI] + ")";
+    }
+    contains = translatedADIArr.join(", ");
+  }
+
+  //remove duplicate boxes
   for (let b1i = 0; b1i < boxVertices.length; b1i++) {
     const b1 = boxVertices[b1i];
     for (let b2i = b1i + 1; b2i < boxVertices.length; b2i++) {
@@ -693,7 +324,6 @@ async function parseTextBothWays(text, showMaybeNonVegan, wordAndBox, screenHeig
       if (same) console.log("Duplicate box found: " + b1);
     }
   }
-  console.log(boxVertices.length)
   return [veganScore, contains, boxVertices];
 }
 export const OCR = callGoogleVisionAsync;

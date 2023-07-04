@@ -55,24 +55,29 @@ export default function App() {
     const wordAndBox = OCRoutput[1];
     setVeganResult("Analyzing text...");
     const score_ADI_BoxOutline = await parse(textRead, showMaybeNonVegan, wordAndBox, screenHeight, screenWidth);
-    score = score_ADI_BoxOutline[0];
-    if (score == 2) {
-      setVeganResult("Appears to be vegan.");
-    } else if (score == 1) {
-      setVeganResult("Maybe not be vegan because of:");
-    } else if (score == 0) {
-      setVeganResult("NOT vegan.");
-    } else if (score == -1) {
-      setVeganResult("No words found. Please scan again.");
+    if(score_ADI_BoxOutline.length == 1) {
+      setVeganResult("" + score_ADI_BoxOutline[0]);
+      setTextColor("red");
+    } else {
+      score = score_ADI_BoxOutline[0];
+      if (score == 2) {
+        setVeganResult("Appears to be vegan.");
+      } else if (score == 1) {
+        setVeganResult("Maybe not be vegan because of:");
+      } else if (score == 0) {
+        setVeganResult("NOT vegan.");
+      } else if (score == -1) {
+        setVeganResult("No words found. Please scan again.");
+      }
+      if (score_ADI_BoxOutline[1]) {
+        setFoundADI(score_ADI_BoxOutline[1]);
+        setFoundADIBGC("black");
+      }
+      if (score_ADI_BoxOutline[2]) {
+        setBoxVertices(score_ADI_BoxOutline[2])
+      }
+      setTextColor(colors[score + 1])
     }
-    if (score_ADI_BoxOutline[1]) {
-      setFoundADI(score_ADI_BoxOutline[1]);
-      setFoundADIBGC("black");
-    }
-    if (score_ADI_BoxOutline[2]) {
-      setBoxVertices(score_ADI_BoxOutline[2])
-    }
-    setTextColor(colors[score + 1])
   };
   const removeText = () => {
     if (veganResult != "Scanning image..." && veganResult != "Analyzing text...") {
