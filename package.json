@@ -12,6 +12,7 @@
     "@expo/vector-icons": "^13.0.0",
     "@expo/webpack-config": "^0.17.2",
     "@google-cloud/translate": "^7.2.1",
+    "@react-native-async-storage/async-storage": "^1.19.0",
     "@tradle/react-native-http": "^2.0.0",
     "@vitalets/google-translate-api": "^9.2.0",
     "asyncstorage-down": "^4.2.0",

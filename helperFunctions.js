@@ -157,7 +157,7 @@ async function parseTextAPI(text, showMaybeNonVegan, wordAndBox, boxVertices) {
   text = text.replaceAll(/[\n\r\t]/g, ' ').trim();
   text = text.replaceAll("  ", ' ');
   console.log("----------------------text len: " + text.length + " -----------------")
-  console.log(text)
+  // console.log(text)
   let isVegan = true;
   let nonVeganFound = "";
 
@@ -221,9 +221,8 @@ async function parseTextBothWays(text, showMaybeNonVegan, doTranslate, wordAndBo
       languageFound = res.from.language.iso;
       if (languageFound != 'en') text = res.text;
     }
-
     text = text.toLowerCase();
-    console.log(text)
+    // console.log(text)
     if (text.includes("may ")) text = text.substring(0, text.indexOf("may "));
 
     let boxVertices = [];

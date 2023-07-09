@@ -1,6 +1,6 @@
 import * as React from "react";
 import { OCR, parse } from "./helperFunctions";
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, Image, Dimensions, Linking} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from 'react';
 import { Camera } from 'expo-camera';
@@ -22,6 +22,7 @@ export default function App() {
   const [foundADIBGC, setFoundADIBGC] = useState("")
   const [boxVertices, setBoxVertices] = useState([])
   const toggleSwitch = () => setShowMaybeNonVegan(previousState => !previousState);
+  const [showRateButton, setShowRateButton] = useState(true)
 
   const [hasCameraPermission, setHasCameraPermission] = useState();
   useEffect(() => {
@@ -36,6 +37,18 @@ export default function App() {
   } else if (!hasCameraPermission) {
     return <Text>Permission for camera not granted. Please change this in settings.</Text>
   }
+
+  const openAppStore = () => {
+    const link = 'itms-apps://apps.apple.com/tr/app/veganchecker/id1672693217?l=tr';
+    Linking.canOpenURL(link).then(
+      (supported) => {
+        supported && Linking.openURL(link);
+      },
+      (err) => console.log(err)
+    );
+    // setShowRateButton(false)
+  };
+
   let takePic = async () => {
     let options = {
       quality: 0.4,
@@ -109,8 +122,12 @@ export default function App() {
         </Svg>
         <Image style={styles.image} source={require('./assets/icon_transparent.png')} />
         <TouchableOpacity style={styles.maybeButton} onPress={toggleSwitch}>
-          <Text style={styles.buttonText}>{showMaybeNonVegan ? 'press to ignore \nmaybe non-vegan' : 'press to show \nmaybe non-vegan'}</Text>
+          <Text style={styles.maybeButtonText}>{showMaybeNonVegan ? 'press to ignore \nmaybe non-vegan' : 'press to show \nmaybe non-vegan'}</Text>
         </TouchableOpacity>
+        {showRateButton && <TouchableOpacity style={styles.rateButton} onPress={openAppStore}>
+            <Text style={styles.rateButtonText}>Rate my app!</Text>
+        </TouchableOpacity>}
+        
         <TouchableOpacity style={{ position: 'absolute', top: 120 }} onPress={removeText}>
           <Text style={{ borderRadius: 8, overflow: 'hidden', padding: 3, textAlign: 'center', top: 0, fontSize: 24, fontWeight: 'bold', color: textColor, backgroundColor: veganTextBGC }}>{veganResult}</Text>
           <Text style={{ borderRadius: 5, overflow: 'hidden', padding: 4, flex: 1, textAlign: 'center', top: 0, fontSize: 14, fontWeight: 'bold', color: textColor, backgroundColor: foundADIBGC }}>{foundADI}</Text>
@@ -142,7 +159,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     width: 100,
     borderRadius: 100,
-    bottom: 10
+    bottom: 10,
   },
   veganTextContainer: {
     alignSelf: 'center',
@@ -151,20 +168,36 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 4,
   },
-  buttonText: {
-    color: 'black',
-    left: 14,
-    top: 7,
-    fontSize: 10,
-  },
   maybeButton: {
     position: 'absolute',
+    justifyContent: 'center',
     backgroundColor: '#fff',
     width: 110,
     height: 40,
     borderRadius: 200,
     top: 30,
     right: 10,
+  },
+  maybeButtonText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: 10.5,
+  },
+  rateButton: {
+    position: 'absolute',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    width: 70,
+    height: 35,
+    borderRadius: 100,
+    top: 70,
+    left: 10,
+  },
+  rateButtonText: {
+    color: 'green',
+    textAlign: 'center',
+    fontSize: 12,
+    fontWeight: 'bold'
   },
   overlay: {
     position: 'absolute'
