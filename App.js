@@ -54,9 +54,9 @@ export default function App() {
     const textRead = OCRoutput[0].text;
     const wordAndBox = OCRoutput[1];
     setVeganResult("Analyzing text...");
-    const score_ADI_BoxOutline = await parse(textRead, showMaybeNonVegan, wordAndBox, screenHeight, screenWidth);
-    if(score_ADI_BoxOutline.length == 1) {
-      setVeganResult("" + score_ADI_BoxOutline[0]);
+    const score_ADI_BoxOutline = await parse(textRead, showMaybeNonVegan, true, wordAndBox, screenHeight, screenWidth);
+    if(score_ADI_BoxOutline[0] == "error") {
+      setVeganResult("" + score_ADI_BoxOutline[1]);
       setTextColor("red");
     } else {
       score = score_ADI_BoxOutline[0];
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     width: 100,
     borderRadius: 100,
-    bottom: 11
+    bottom: 10
   },
   veganTextContainer: {
     alignSelf: 'center',
