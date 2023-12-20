@@ -171,7 +171,7 @@ async function parseTextAPI(text, showMaybeNonVegan, wordAndBox, boxVertices) {
     if (element.startsWith("label class=\"vegan-status")) {
       let status = element.substring("label class=\"vegan-status".length + 1, element.indexOf("\">"));
       let ingredient = elementList[i + 1].substring("/label>".length);
-      console.log("API ing: " + ingredient)
+      // console.log("API ing: " + ingredient)
       if (status == "not-vegan" || status == "probably-not-vegan") {
         isVegan = false;
         nonVeganFound += ingredient + ", ";
@@ -196,8 +196,11 @@ async function parseTextAPI(text, showMaybeNonVegan, wordAndBox, boxVertices) {
 function addToBoxVertices(ingredient, boxVertices, wordAndBox, boxColor) {
   let vertices = wordAndBox[ingredient.toLowerCase()];
   if (vertices != undefined) {
-    let xyPairs = [];
+    let xyPairs = [];   
     //4096 by 2304, scale by height/4096, width/2304
+    // vertices.forEach(vertex => xyPairs.push(
+    //   [Math.round(vertex.y * screenHeight / 4096),
+    //   Math.round(vertex.x * screenWidth / 2304)]));
     vertices.forEach(vertex => xyPairs.push(
       [Math.round(vertex.y * screenHeight / 4096),
       Math.round(vertex.x * screenWidth / 2304)]));
@@ -242,12 +245,12 @@ async function parseTextBothWays(text, showMaybeNonVegan, doTranslate, wordAndBo
     } else if (apiScore > manualScore) {
       veganScore = manualScore;
       let manualFoundArr = manualWay[1];
-      console.log(manualFoundArr.length + " and " + manualFoundArr)
+      // console.log(manualFoundArr.length + " and " + manualFoundArr)
       for (let manual = 0; manual < manualFoundArr.length; manual++) {
         let ingredient = manualFoundArr[manual].trim();
         //turn the first letter of every word to uppercase
         ingredient = ingredient.charAt(0).toUpperCase() + ingredient.slice(1);
-        console.log(ingredient)
+        // console.log(ingredient)
         let fromIndex = 0;
         while (true) {
           let found = ingredient.indexOf(" ", fromIndex);
@@ -258,17 +261,17 @@ async function parseTextBothWays(text, showMaybeNonVegan, doTranslate, wordAndBo
         }
         contains += ingredient.trim() + ", ";
       }
-      console.log("finished (>0)-0")
+      // console.log("finished (>0)-0")
     } else if (apiScore < manualScore) {
       veganScore = apiScore;
       contains = apiWay[1];
     } else if (apiScore == manualScore) {
-      console.log("in 0-0")
+      // console.log("in 0-0")
       veganScore = apiScore;
       let apiFoundArr = apiWay[1].split(",");
-      console.log(apiFoundArr)
+      // console.log(apiFoundArr)
       let manualFoundArr = manualWay[1];
-      console.log(manualFoundArr)
+      // console.log(manualFoundArr)
       for (let api = 0; api < apiFoundArr.length; api++) {
         let f1 = apiFoundArr[api].trim().toLowerCase();
         for (let manual = 0; manual < manualFoundArr.length; manual++) {
@@ -280,29 +283,29 @@ async function parseTextBothWays(text, showMaybeNonVegan, doTranslate, wordAndBo
           }
         }
       }
-      console.log("removed repeats")
-      console.log(apiFoundArr.length + ", " + apiFoundArr)
+      // console.log("removed repeats")
+      // console.log(apiFoundArr.length + ", " + apiFoundArr)
       for (let api = 0; api < apiFoundArr.length; api++) {
-        console.log("adding " + apiFoundArr[api] + " to " + contains)
+        // console.log("adding " + apiFoundArr[api] + " to " + contains)
         contains += apiFoundArr[api].trim() + ", ";
       }
-      console.log("added APIfound")
-      console.log(manualFoundArr)
+      // console.log("added APIfound")
+      // console.log(manualFoundArr)
       for (let manual = 0; manual < manualFoundArr.length; manual++) {
         if (manualFoundArr[manual] == "") {
-          console.log("skipped " + manual)
+          // console.log("skipped " + manual)
           continue;
         }
-        console.log(manualFoundArr[manual].trim())
+        // console.log(manualFoundArr[manual].trim())
         let ingredient = manualFoundArr[manual].trim();
-        console.log("before: " + ingredient)
+        // console.log("before: " + ingredient)
         //turn the first letter of every word to uppercase
         ingredient = ingredient.charAt(0).toUpperCase() + ingredient.slice(1);
-        console.log("after: " + ingredient)
+        // console.log("after: " + ingredient)
         let fromIndex = 0;
         while (true) {
           let found = ingredient.indexOf(" ", fromIndex);
-          console.log(found)
+          // console.log(found)
           //space not found or at the end
           if (found == -1 || found >= ingredient.length - 1) break;
           ingredient = ingredient.slice(0, found + 1) + ingredient.charAt(found + 1).toUpperCase() + ingredient.slice(found + 2);
@@ -310,10 +313,10 @@ async function parseTextBothWays(text, showMaybeNonVegan, doTranslate, wordAndBo
         }
         contains += ingredient.trim() + ", ";
       }
-      console.log("added manual found")
+      // console.log("added manual found")
     }
     if (contains.endsWith(", ")) contains = contains.slice(0, contains.length - 2);
-    console.log("sliced contains")
+    // console.log("sliced contains")
     //remove duplicates
     let containsArr = contains.split(", ");
     let uniqueContainsArr = [];
@@ -322,9 +325,9 @@ async function parseTextBothWays(text, showMaybeNonVegan, doTranslate, wordAndBo
         uniqueContainsArr.push(ing);
       }
     });
-    console.log("before .join")
+    // console.log("before .join")
     contains = uniqueContainsArr.join(", ");
-    console.log("removed duplicates in contains Arr")
+    // console.log("removed duplicates in contains Arr")
 
     //adds boxes around ingredients in their original language based on OCR-found coordinates
     if (languageFound != 'en' && contains.length > 0) {
@@ -333,8 +336,6 @@ async function parseTextBothWays(text, showMaybeNonVegan, doTranslate, wordAndBo
       let untranslatedADIArr = untranslatedADI.text.replaceAll('，', ', ').split(", ");
       let colorOfNonEnglishADIBoxes = (veganScore == 0 ? "red" : "yellow");
       untranslatedADIArr.forEach(ingredient => {
-        //NOT supposed to be RED because it depends on whether the ingredient is maybe or def non-vegan
-        //FIX later
         addToBoxVertices(ingredient, boxVertices, wordAndBox, colorOfNonEnglishADIBoxes);
       });
       for (let ADI = 0; ADI < translatedADIArr.length; ADI++) {
@@ -359,7 +360,7 @@ async function parseTextBothWays(text, showMaybeNonVegan, doTranslate, wordAndBo
         if (same) console.log("Duplicate box found: " + b1);
       }
     }
-    console.log("removed duplicates in boxes")
+    // console.log("removed duplicates in boxes")
 
     return [veganScore, contains, boxVertices];
   } catch (error) {

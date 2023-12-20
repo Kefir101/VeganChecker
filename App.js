@@ -1,14 +1,19 @@
 import * as React from "react";
 import { OCR, parse } from "./helperFunctions";
-import { StyleSheet, Text, View, Button, TouchableOpacity, Image, Dimensions, Linking} from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, Image, Dimensions, useWindowDimensions, Linking } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from 'react';
 import { Camera } from 'expo-camera';
 import Svg, { Line } from 'react-native-svg';
+// import store from 'react-native-simple-store';
+// import Storage from 'react-native-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage'
+
 export default function App() {
-  const screenDimensions = Dimensions.get('window');
-  const screenHeight = screenDimensions.height;
-  const screenWidth = screenDimensions.width;
+  let { height, width } = useWindowDimensions();
+  let screenHeight = height;
+  let screenWidth = width;
+
 
   let cameraRef = useRef();
   let score = -1;
@@ -22,7 +27,12 @@ export default function App() {
   const [foundADIBGC, setFoundADIBGC] = useState("")
   const [boxVertices, setBoxVertices] = useState([])
   const toggleSwitch = () => setShowMaybeNonVegan(previousState => !previousState);
+  // if(!store.keys().includes('showRateButton')){
+  //   store.update('showRateButton', {display: true})
+  // }
+  // const [showRateButton, setShowRateButton] = useState(store.get('showRateButton'))
   const [showRateButton, setShowRateButton] = useState(true)
+
 
   const [hasCameraPermission, setHasCameraPermission] = useState();
   useEffect(() => {
@@ -46,7 +56,8 @@ export default function App() {
       },
       (err) => console.log(err)
     );
-    // setShowRateButton(false)
+    setShowRateButton(false) 
+    // store.update('showRateButton', {display: false})
   };
 
   let takePic = async () => {
@@ -64,11 +75,9 @@ export default function App() {
     setBoxVertices([]);
     setVeganResult("Scanning image...");
     const OCRoutput = await OCR(newPhoto.base64);
-    const textRead = OCRoutput[0].text;
-    const wordAndBox = OCRoutput[1];
     setVeganResult("Analyzing text...");
-    const score_ADI_BoxOutline = await parse(textRead, showMaybeNonVegan, true, wordAndBox, screenHeight, screenWidth);
-    if(score_ADI_BoxOutline[0] == "error") {
+    const score_ADI_BoxOutline = await parse(OCRoutput[0].text, showMaybeNonVegan, true, OCRoutput[1], screenHeight, screenWidth);
+    if (score_ADI_BoxOutline[0] == "error") {
       setVeganResult("" + score_ADI_BoxOutline[1]);
       setTextColor("red");
     } else {
@@ -105,35 +114,29 @@ export default function App() {
   return (
     <>
       <Camera style={styles.container} ref={cameraRef}>
-        <Svg height={screenHeight} width={screenWidth} style={styles.overlay}>
-        {/* <Rect key={index} x={screenWidth - box[0][3][0]} y={box[0][3][1]} width={box[0][2][0] - box[0][0][0]} height={box[0][1][1]-box[0][1]} stroke="red" strokeWidth="2" fill="none"/> */}
+        <Svg height={screenHeight} width={screenWidth} style={styles.overlay} preserveAspectRatio="xMidYMin slice">
           {boxVertices.map((box, index) => (
-            <Line key={"line1"+index} x1={screenWidth - box[0][0][0]} y1={box[0][0][1]} x2={screenWidth - box[0][1][0]} y2={box[0][1][1]} stroke={box[1]} strokeWidth="2" />
-          ))}
-          {boxVertices.map((box, index) => (
-            <Line key={"line2"+index} x1={screenWidth - box[0][1][0]} y1={box[0][1][1]} x2={screenWidth - box[0][2][0]} y2={box[0][2][1]} stroke={box[1]} strokeWidth="2" />
-          ))}
-          {boxVertices.map((box, index) => (
-            <Line key={"line3"+index} x1={screenWidth - box[0][2][0]} y1={box[0][2][1]} x2={screenWidth - box[0][3][0]} y2={box[0][3][1]} stroke={box[1]} strokeWidth="2" />
-          ))}
-          {boxVertices.map((box, index) => (
-            <Line key={"line4"+index} x1={screenWidth - box[0][3][0]} y1={box[0][3][1]} x2={screenWidth - box[0][0][0]} y2={box[0][0][1]} stroke={box[1]} strokeWidth="2" />
+            [<Line key={"line1" + index} x1={screenWidth - box[0][0][0]} y1={box[0][0][1]} x2={screenWidth - box[0][1][0]} y2={box[0][1][1]} stroke={box[1]} strokeWidth="2" />
+              , <Line key={"line2" + index} x1={screenWidth - box[0][1][0]} y1={box[0][1][1]} x2={screenWidth - box[0][2][0]} y2={box[0][2][1]} stroke={box[1]} strokeWidth="2" />
+              , <Line key={"line3" + index} x1={screenWidth - box[0][2][0]} y1={box[0][2][1]} x2={screenWidth - box[0][3][0]} y2={box[0][3][1]} stroke={box[1]} strokeWidth="2" />
+              , <Line key={"line4" + index} x1={screenWidth - box[0][3][0]} y1={box[0][3][1]} x2={screenWidth - box[0][0][0]} y2={box[0][0][1]} stroke={box[1]} strokeWidth="2" />
+            ]
           ))}
         </Svg>
         <Image style={styles.image} source={require('./assets/icon_transparent.png')} />
         <TouchableOpacity style={styles.maybeButton} onPress={toggleSwitch}>
-          <Text style={styles.maybeButtonText}>{showMaybeNonVegan ? 'press to ignore \nmaybe non-vegan' : 'press to show \nmaybe non-vegan'}</Text>
+          <Text allowFontScaling={false} style={styles.maybeButtonText}>{showMaybeNonVegan ? 'press to ignore \nmaybe non-vegan' : 'press to show \nmaybe non-vegan'}</Text>
         </TouchableOpacity>
         {showRateButton && <TouchableOpacity style={styles.rateButton} onPress={openAppStore}>
-            <Text style={styles.rateButtonText}>Rate my app!</Text>
+          <Text allowFontScaling={false} style={styles.rateButtonText}>Rate my app!</Text>
         </TouchableOpacity>}
-        
-        <TouchableOpacity style={{ position: 'absolute', top: 120 }} onPress={removeText}>
-          <Text style={{ borderRadius: 8, overflow: 'hidden', padding: 3, textAlign: 'center', top: 0, fontSize: 24, fontWeight: 'bold', color: textColor, backgroundColor: veganTextBGC }}>{veganResult}</Text>
-          <Text style={{ borderRadius: 5, overflow: 'hidden', padding: 4, flex: 1, textAlign: 'center', top: 0, fontSize: 14, fontWeight: 'bold', color: textColor, backgroundColor: foundADIBGC }}>{foundADI}</Text>
+
+        <TouchableOpacity style={styles.veganTextContainer} onPress={removeText}>
+          <Text allowFontScaling={false} style={{ borderRadius: 8, overflow: 'hidden', padding: 3, textAlign: 'center', top: 0, fontSize: 24, fontWeight: 'bold', color: textColor, backgroundColor: veganTextBGC }}>{veganResult}</Text>
+          <Text allowFontScaling={false} style={{ borderRadius: 5, overflow: 'hidden', padding: 4, flex: 1, textAlign: 'center', top: 0, fontSize: 14, fontWeight: 'bold', color: textColor, backgroundColor: foundADIBGC }}>{foundADI}</Text>
         </TouchableOpacity>
         <View style={styles.buttonContainer}>
-          <Button color='green' title="Take Pic" onPress={takePic} />
+          <Button allowFontScaling={false} color='green' title="Take Pic" onPress={takePic} />
         </View>
         <StatusBar style="auto" />
       </Camera>
@@ -142,21 +145,24 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  overlay: {
+    position: 'absolute'
+  },
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-end',
   },
   image: {
     position: 'absolute',
-    top: 15,
+    top: 26,
     marginRight: 'auto',
     left: 12,
-    width: 52,
-    height: 52,
+    width: 58,
+    height: 58,
   },
   buttonContainer: {
-    backgroundColor: '#fff',
+    position: 'absolute',
+    backgroundColor: 'white',
     width: 100,
     borderRadius: 100,
     bottom: 10,
@@ -164,7 +170,7 @@ const styles = StyleSheet.create({
   veganTextContainer: {
     alignSelf: 'center',
     position: 'absolute',
-    top: 120,
+    top: 126,
     borderRadius: 10,
     padding: 4,
   },
@@ -175,7 +181,7 @@ const styles = StyleSheet.create({
     width: 110,
     height: 40,
     borderRadius: 200,
-    top: 30,
+    top: 37,
     right: 10,
   },
   maybeButtonText: {
@@ -190,7 +196,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 35,
     borderRadius: 100,
-    top: 70,
+    top: 81,
     left: 10,
   },
   rateButtonText: {
@@ -199,7 +205,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold'
   },
-  overlay: {
-    position: 'absolute'
-  }
 });
